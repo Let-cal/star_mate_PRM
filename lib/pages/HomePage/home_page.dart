@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 import 'header_home.dart';
+import 'content_home.dart';
+import 'footer_home.dart';
 
 class Home extends StatelessWidget {
   const Home({super.key});
@@ -11,10 +13,9 @@ class Home extends StatelessWidget {
         children: [
           HeaderHome(),
           Expanded(
-            child: Center(
-              child: Text('Content goes here'), // Nội dung của trang Home
-            ),
+            child: CustomCardWidget(),
           ),
+          Footer(), // Footer sẽ nằm ở dưới cùng
         ],
       ),
     );

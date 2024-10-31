@@ -27,5 +27,6 @@ class LoginPageModel extends ChangeNotifier {
     passwordTextController.dispose();
     emailAddressFocusNode.dispose();
     passwordFocusNode.dispose();
+    super.dispose();
   }
 }

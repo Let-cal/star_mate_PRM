@@ -1,6 +1,6 @@
 // forgot_page.dart
 import 'package:flutter/material.dart';
-import 'widgets/forgot_form.dart';
+import './widgets/forgot_form.dart';
 import 'forgot_page_model.dart';
 
 class ForgotPageWidget extends StatefulWidget {

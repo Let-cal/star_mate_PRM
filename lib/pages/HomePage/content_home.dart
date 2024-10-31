@@ -1,14 +1,9 @@
 import 'package:flutter/material.dart';
 import 'list_person.dart';
 
-class CustomCardWidget extends StatefulWidget {
+class CustomCardWidget extends StatelessWidget {
   const CustomCardWidget({super.key});
 
-  @override
-  CustomCardWidgetState createState() => CustomCardWidgetState();
-}
-
-class CustomCardWidgetState extends State<CustomCardWidget> {
   @override
   Widget build(BuildContext context) {
     final textTheme = Theme.of(context).textTheme;
@@ -31,7 +26,6 @@ class CustomCardWidgetState extends State<CustomCardWidget> {
               ),
             ),
           ),
-          // Thay đổi SizedBox thành Expanded để chiếm hết không gian còn lại
           Expanded(
             child: ListView.builder(
               itemCount: people.length,

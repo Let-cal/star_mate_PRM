@@ -1,8 +1,8 @@
 // widgets/forgot_form.dart
 import 'package:flutter/material.dart';
 import '../forgot_page_model.dart';
-import 'custom_button.dart';
-import 'custom_text_field.dart';
+import '../../widgets/custom_button.dart';
+import '../../widgets/custom_text_field.dart';
 import '../../../services/api_service.dart';
 
 class ForgotForm extends StatelessWidget {
@@ -105,9 +105,9 @@ class ForgotForm extends StatelessWidget {
                     Text('Password reset instructions sent to your email.'),
               ),
             );
-            // Optionally navigate to another page
-            // ignore: use_build_context_synchronously
-            Navigator.pushReplacementNamed(context, '/');
+            // Navigate to ResetPassPage with the email
+          // ignore: use_build_context_synchronously
+          _navigateToSentOTP(context, email);
           } else {
             // ignore: use_build_context_synchronously
             ScaffoldMessenger.of(context).showSnackBar(
@@ -124,4 +124,11 @@ class ForgotForm extends StatelessWidget {
       ),
     );
   }
+  void _navigateToSentOTP(BuildContext context, String email) {
+  Navigator.of(context).pushNamed(
+    '/sent_otp',
+    arguments: email, // Pass the email as an argument
+  );
+}
+
 }

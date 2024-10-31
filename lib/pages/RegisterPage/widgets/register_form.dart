@@ -3,8 +3,8 @@ import 'package:flutter/material.dart';
 
 import '../../../services/api_service.dart'; // Import the ApiService
 import '../register_page_model.dart';
-import 'custom_button.dart';
-import 'custom_text_field.dart';
+import '../../widgets/custom_button.dart';
+import '../../widgets/custom_text_field.dart';
 
 class RegisterForm extends StatelessWidget {
   final RegisterPageModel model;

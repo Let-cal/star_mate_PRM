@@ -101,4 +101,68 @@ class ApiService {
       return null;
     }
   }
+
+  static Future<dynamic> verifyOtp({
+    required String email,
+    required String codeOTP,
+  }) async {
+    final url = Uri.parse('$baseUrl/verify-otp');
+    final headers = {
+      'Content-Type': 'application/json',
+      'accept': '*/*',
+    };
+    final body = jsonEncode({
+      'email': email,
+      'codeOTP': codeOTP,
+    });
+    try {
+      final response = await http.post(url, headers: headers, body: body);
+      final responseData = jsonDecode(response.body);
+
+      if (response.statusCode == 200) {
+        return responseData; // Success response
+      } else {
+        print('Error: ${response.statusCode} - ${responseData['message']}');
+        return responseData; // Return the responseData for further handling
+      }
+    } catch (e) {
+      print('Error: $e');
+      return null;
+    }
+  }
+
+  Future<Map<String, dynamic>?> resetPassword({
+    required String email,
+    required String password,
+    required String confirmPassword,
+  }) async {
+    final url = Uri.parse('$baseUrl/reset-password');
+    final headers = {
+      'Content-Type': 'application/json',
+      'accept': '*/*',
+    };
+    final body = jsonEncode({
+      'email': email,
+      'password': password,
+      'confirmPassword': confirmPassword,
+    });
+
+    try {
+      final response = await http.post(url, headers: headers, body: body);
+
+      // Log the response body for debugging
+      print('Response Body: ${response.body}');
+
+      final responseData = jsonDecode(response.body);
+      if (response.statusCode == 200) {
+        return responseData; // Success response
+      } else {
+        print('Error: ${response.statusCode} - ${responseData['message']}');
+        return responseData; // Return the responseData for further handling
+      }
+    } catch (e) {
+      print('Error: $e');
+      return null;
+    }
+  }
 }

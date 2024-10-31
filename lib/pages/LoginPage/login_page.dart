@@ -228,7 +228,9 @@ class _LoginPageWidgetState extends State<LoginPageWidget> {
               Navigator.pushReplacementNamed(context, '/home');
             } else {
               // Display the message from response if available
-              final errorMessage = response?['message'] ?? 'Login failed';
+              final errorMessage =
+                  (response?['errorMessages'] as List<dynamic>?)?.join(', ') ??
+                      'Login failed';
               print('Error: $errorMessage'); // Debug log to check the message
 
               // Show error message in SnackBar

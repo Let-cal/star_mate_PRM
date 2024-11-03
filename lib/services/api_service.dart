@@ -1,11 +1,16 @@
 import 'dart:convert';
 
+// ignore: depend_on_referenced_packages
 import 'package:http/http.dart' as http;
+
+import '../pages/ProfilePage/user_model.dart';
+import './storage_service.dart';
 
 class ApiService {
   static const String baseUrl =
       'https://starmate-g8dkcraeardagdfb.canadacentral-01.azurewebsites.net/api/authentication';
-
+  static const String baseUserUrl =
+      'https://starmate-g8dkcraeardagdfb.canadacentral-01.azurewebsites.net/api/users';
   // Hàm đăng ký tài khoản
   Future<Map<String, dynamic>?> register({
     required String email,
@@ -59,16 +64,17 @@ class ApiService {
 
     try {
       final response = await http.post(url, headers: headers, body: body);
-
-      // Parse the response body regardless of the status code
       final responseData = jsonDecode(response.body);
 
       if (response.statusCode == 200) {
-        return responseData; // Success response
+        // Lưu userId (hint) vào storage nếu login thành công
+        if (responseData['hint'] != null) {
+          await StorageService.saveUserId(responseData['hint']);
+        }
+        return responseData;
       } else {
-        // Print the error message from the API response
         print('Error: ${response.statusCode} - ${responseData['message']}');
-        return responseData; // Return the responseData for further handling
+        return responseData;
       }
     } catch (e) {
       print('Error: $e');
@@ -159,6 +165,34 @@ class ApiService {
       } else {
         print('Error: ${response.statusCode} - ${responseData['message']}');
         return responseData; // Return the responseData for further handling
+      }
+    } catch (e) {
+      print('Error: $e');
+      return null;
+    }
+  }
+
+  Future<User?> getUserInfo() async {
+    // Lấy userId từ storage
+    final userId = await StorageService.getUserId();
+    if (userId == null) {
+      print('Error: No user ID found in storage');
+      return null;
+    }
+
+    final url = Uri.parse('$baseUserUrl/$userId');
+    final headers = {
+      'accept': '*/*',
+    };
+
+    try {
+      final response = await http.get(url, headers: headers);
+      final responseData = jsonDecode(response.body);
+      if (response.statusCode == 200) {
+        return User.fromJson(responseData);
+      } else {
+        print('Error: ${response.statusCode} - ${responseData['message']}');
+        return null;
       }
     } catch (e) {
       print('Error: $e');

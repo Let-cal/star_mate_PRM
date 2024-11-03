@@ -3,7 +3,7 @@ import 'package:provider/provider.dart';
 
 import '../../services/api_service.dart'; // Import ApiService
 import 'login_page_model.dart';
-
+import '../../loading_screen.dart';
 class LoginPageWidget extends StatefulWidget {
   const LoginPageWidget({super.key});
 
@@ -32,23 +32,30 @@ class _LoginPageWidgetState extends State<LoginPageWidget> {
       create: (_) => _model,
       child: GestureDetector(
         onTap: () => FocusScope.of(context).unfocus(),
-        child: Scaffold(
-          backgroundColor: Theme.of(context).colorScheme.surface,
-          body: SafeArea(
-            child: SingleChildScrollView(
-              child: Column(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                  _buildLogo(),
-                  _buildLoginForm(context),
-                ],
+        child: Stack(
+          children: [
+            Scaffold(
+              backgroundColor: Theme.of(context).colorScheme.surface,
+              body: SafeArea(
+                child: SingleChildScrollView(
+                  child: Column(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      _buildLogo(),
+                      _buildLoginForm(context),
+                    ],
+                  ),
+                ),
               ),
             ),
-          ),
+            // Conditionally display LoadingScreen based on _model.isLoading
+            if (_model.isLoading) const LoadingScreen(isLoading: true,),
+          ],
         ),
       ),
     );
   }
+
 
   Widget _buildLogo() {
     return Padding(
@@ -215,6 +222,9 @@ class _LoginPageWidgetState extends State<LoginPageWidget> {
       alignment: Alignment.center,
       child: ElevatedButton(
         onPressed: () async {
+          // Set loading to true
+          setState(() => _model.isLoading = true);
+
           if (_model.emailAddressTextController.text.isNotEmpty &&
               _model.passwordTextController.text.isNotEmpty) {
             // Call the login API
@@ -222,7 +232,8 @@ class _LoginPageWidgetState extends State<LoginPageWidget> {
               email: _model.emailAddressTextController.text,
               password: _model.passwordTextController.text,
             );
-
+            // Set loading to false
+            setState(() => _model.isLoading = false);
             if (response != null && response['success'] == true) {
               // Handle successful login (e.g., navigate to home screen)
               Navigator.pushReplacementNamed(context, '/home');
@@ -239,6 +250,8 @@ class _LoginPageWidgetState extends State<LoginPageWidget> {
               );
             }
           } else {
+            // Set loading to false
+          setState(() => _model.isLoading = false);
             ScaffoldMessenger.of(context).showSnackBar(
               const SnackBar(content: Text('Please fill out all fields')),
             );

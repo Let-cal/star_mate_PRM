@@ -1,10 +1,11 @@
 // widgets/register_form.dart
 import 'package:flutter/material.dart';
 
+import '../../../loading_screen.dart';
 import '../../../services/api_service.dart'; // Import the ApiService
-import '../register_page_model.dart';
 import '../../widgets/custom_button.dart';
 import '../../widgets/custom_text_field.dart';
+import '../register_page_model.dart';
 
 class RegisterForm extends StatelessWidget {
   final RegisterPageModel model;
@@ -18,31 +19,37 @@ class RegisterForm extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Align(
-      alignment: Alignment.center,
-      child: Container(
-        width: double.infinity,
-        constraints: const BoxConstraints(maxWidth: 670),
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-          children: [
-            Expanded(
-              child: SingleChildScrollView(
-                padding: const EdgeInsets.symmetric(horizontal: 12),
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    _buildHeader(context),
-                    _buildFormFields(context),
-                    _buildCheckbox(context),
-                  ],
+    return Stack(
+      children: [
+        Align(
+          alignment: Alignment.center,
+          child: Container(
+            width: double.infinity,
+            constraints: const BoxConstraints(maxWidth: 670),
+            child: Column(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: [
+                Expanded(
+                  child: SingleChildScrollView(
+                    padding: const EdgeInsets.symmetric(horizontal: 12),
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        _buildHeader(context),
+                        _buildFormFields(context),
+                        _buildCheckbox(context),
+                      ],
+                    ),
+                  ),
                 ),
-              ),
+                if (!isKeyboardVisible) _buildSubmitButton(context),
+              ],
             ),
-            if (!isKeyboardVisible) _buildSubmitButton(context),
-          ],
+          ),
         ),
-      ),
+        // Conditionally display LoadingScreen based on _model.isLoading
+        if (model.isLoading) const LoadingScreen(isLoading: true),
+      ],
     );
   }
 
@@ -138,7 +145,7 @@ class RegisterForm extends StatelessWidget {
             );
             return;
           }
-
+          model.setLoading(true);
           // Call the API
           final response = await apiService.register(
             email: email,
@@ -146,7 +153,7 @@ class RegisterForm extends StatelessWidget {
             fullName: displayName,
             telephoneNumber: telephoneNumber,
           );
-
+          model.setLoading(false);
           if (response != null && response['success'] == true) {
             // Show success message
             // ignore: use_build_context_synchronously

@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 
-class HeaderHome extends StatelessWidget {
-  const HeaderHome({super.key});
+class HeaderFriend extends StatelessWidget {
+  const HeaderFriend({super.key});
 
   // Hàm mở bottom sheet
   void _showSortBottomSheet(BuildContext context) {

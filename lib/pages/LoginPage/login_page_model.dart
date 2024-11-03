@@ -6,7 +6,8 @@ class LoginPageModel extends ChangeNotifier {
   final emailAddressFocusNode = FocusNode();
   final passwordFocusNode = FocusNode();
   bool passwordVisibility = false;
-
+  bool isLoading = false;
+  
   String? emailAddressTextControllerValidator(String? value) {
     if (value == null || value.isEmpty) {
       return 'Email is required';

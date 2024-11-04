@@ -11,6 +11,8 @@ class ApiService {
       'https://starmate-g8dkcraeardagdfb.canadacentral-01.azurewebsites.net/api/authentication';
   static const String baseUserUrl =
       'https://starmate-g8dkcraeardagdfb.canadacentral-01.azurewebsites.net/api/users';
+  static const String baseFriendUrl =
+      'https://starmate-g8dkcraeardagdfb.canadacentral-01.azurewebsites.net/api/Friend/user/';
   // Hàm đăng ký tài khoản
   Future<Map<String, dynamic>?> register({
     required String email,
@@ -196,6 +198,30 @@ class ApiService {
       }
     } catch (e) {
       print('Error: $e');
+      return null;
+    }
+  }
+
+  Future<List<Map<String, dynamic>>?> getFriends() async {
+    final userId = await StorageService.getUserId();
+    if (userId == null) return null;
+
+    final url = Uri.parse('$baseFriendUrl$userId');
+    final headers = {
+      'accept': 'text/plain',
+    };
+
+    try {
+      final response = await http.get(url, headers: headers);
+      if (response.statusCode == 200) {
+        final data = jsonDecode(response.body);
+        return List<Map<String, dynamic>>.from(data['data']);
+      } else {
+        print('Failed to fetch friends: ${response.statusCode}');
+        return null;
+      }
+    } catch (e) {
+      print('Error fetching friends: $e');
       return null;
     }
   }

@@ -1,8 +1,9 @@
 import 'package:flutter/material.dart';
-import '../HomePage/list_person.dart';
 
 class CustomCardWidget extends StatelessWidget {
-  const CustomCardWidget({super.key});
+  final List<Map<String, dynamic>> friends;
+
+  const CustomCardWidget({super.key, required this.friends});
 
   @override
   Widget build(BuildContext context) {
@@ -28,9 +29,9 @@ class CustomCardWidget extends StatelessWidget {
           ),
           Expanded(
             child: ListView.builder(
-              itemCount: people.length,
+              itemCount: friends.length,
               itemBuilder: (context, index) {
-                final person = people[index];
+                final friend = friends[index];
                 return Container(
                   width: screenWidth * 0.9,
                   height: 100,
@@ -54,7 +55,7 @@ class CustomCardWidget extends StatelessWidget {
                               padding: const EdgeInsetsDirectional.fromSTEB(
                                   12, 8, 0, 0),
                               child: Text(
-                                person.name,
+                                friend['friendName'],
                                 style: textTheme.bodyLarge?.copyWith(
                                   fontFamily: 'Abel',
                                   fontSize: 14,
@@ -67,7 +68,7 @@ class CustomCardWidget extends StatelessWidget {
                             padding: const EdgeInsetsDirectional.fromSTEB(
                                 0, 8, 0, 0),
                             child: Text(
-                              person.gender,
+                              friend['friendGender'],
                               style: textTheme.bodyLarge?.copyWith(
                                 fontFamily: 'Abel',
                                 fontSize: 14,
@@ -100,7 +101,7 @@ class CustomCardWidget extends StatelessWidget {
                               padding: const EdgeInsetsDirectional.fromSTEB(
                                   12, 0, 0, 0),
                               child: Text(
-                                person.zodiac,
+                                friend['zodiacName'],
                                 style: textTheme.bodyLarge?.copyWith(
                                   fontFamily: 'Abel',
                                   color: const Color(0xFFE12222),

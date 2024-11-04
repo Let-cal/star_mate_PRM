@@ -1,10 +1,11 @@
 import 'package:flutter/material.dart';
 import 'sent_OTP_model.dart';
-import '../../widgets/custom_button.dart'; 
+import '../../widgets/custom_button.dart';
+
 class SentOtpWidget extends StatefulWidget {
   final String email;
 
-  SentOtpWidget({required this.email, Key? key}) : super(key: key);
+  const SentOtpWidget({required this.email, super.key});
 
   @override
   _SentOtpWidgetState createState() => _SentOtpWidgetState();
@@ -64,7 +65,7 @@ class _SentOtpWidgetState extends State<SentOtpWidget> {
               'OTP sent to ${widget.email}',
               style: Theme.of(context).textTheme.bodyLarge,
             ),
-            SizedBox(height: 20),
+            const SizedBox(height: 20),
             Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: List.generate(6, (index) {
@@ -74,11 +75,14 @@ class _SentOtpWidgetState extends State<SentOtpWidget> {
                     controller: _model.otpControllers[index],
                     keyboardType: TextInputType.number,
                     textAlign: TextAlign.center,
-                    style: TextStyle(fontSize: 20, color: Theme.of(context).colorScheme.onSurface),
+                    style: TextStyle(
+                        fontSize: 20,
+                        color: Theme.of(context).colorScheme.onSurface),
                     decoration: InputDecoration(
                       border: OutlineInputBorder(
                         borderRadius: BorderRadius.circular(8),
-                        borderSide: BorderSide(color: Theme.of(context).colorScheme.primary),
+                        borderSide: BorderSide(
+                            color: Theme.of(context).colorScheme.primary),
                       ),
                     ),
                     maxLength: 1,
@@ -87,11 +91,12 @@ class _SentOtpWidgetState extends State<SentOtpWidget> {
                 );
               }),
             ),
-            SizedBox(height: 30),
+            const SizedBox(height: 30),
             Center(
               child: CustomButton(
                 onPressed: () async {
-                  await _model.resetPassword(context); // Pass context for SnackBar
+                  await _model
+                      .resetPassword(context); // Pass context for SnackBar
                 },
                 text: 'Submit',
               ),
@@ -101,5 +106,4 @@ class _SentOtpWidgetState extends State<SentOtpWidget> {
       ),
     );
   }
-  
 }

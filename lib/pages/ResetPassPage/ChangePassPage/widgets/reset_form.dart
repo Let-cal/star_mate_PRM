@@ -7,8 +7,8 @@ import '../reset_pass_model.dart';
 class ResetForm extends StatefulWidget {
   final String email; // Accept email in the constructor
 
-  const ResetForm({Key? key, required this.email})
-      : super(key: key); // Use required to enforce the argument
+  const ResetForm(
+      {super.key, required this.email}); // Use required to enforce the argument
 
   @override
   _ResetFormState createState() => _ResetFormState();
@@ -54,7 +54,7 @@ class _ResetFormState extends State<ResetForm> {
         children: [
           Text('Please fill in the password that you want to change !!!',
               style: Theme.of(context).textTheme.bodyLarge),
-          SizedBox(height: 20),
+          const SizedBox(height: 20),
           CustomTextField(
             controller: _model.emailController,
             labelText: 'Email',
@@ -74,7 +74,7 @@ class _ResetFormState extends State<ResetForm> {
             passwordVisibility: confirmPasswordVisibility,
             onTogglePassword: _toggleConfirmPasswordVisibility,
           ),
-          SizedBox(height: 30),
+          const SizedBox(height: 30),
           CustomButton(
             onPressed: () async {
               await _model.resetPassword(context);

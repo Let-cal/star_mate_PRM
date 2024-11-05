@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import './filter_provider.dart';
+import 'package:provider/provider.dart';
 
 class HeaderHome extends StatefulWidget {
   final Function(List<int> zodiacIds, String gender) onFiltersUpdated;
@@ -254,6 +256,19 @@ class _SortBottomSheetState extends State<SortBottomSheet> {
         ),
       ),
     );
+  }
+
+  @override
+  void initState() {
+    super.initState();
+    // Khởi tạo giá trị từ FilterProvider
+    final filterProvider = Provider.of<FilterProvider>(context, listen: false);
+    if (filterProvider.selectedZodiacIds != null) {
+      selectedZodiacs = zodiacSigns
+          .where((z) => filterProvider.selectedZodiacIds!.contains(z.id))
+          .toList();
+    }
+    selectedGender = filterProvider.selectedGender;
   }
 
   @override

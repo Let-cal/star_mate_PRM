@@ -1,39 +1,31 @@
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 import 'content_home.dart';
 import 'header_home.dart';
 import 'featured_section.dart';
+import './filter_provider.dart';
 
-class Home extends StatefulWidget {
+class Home extends StatelessWidget {
   const Home({super.key});
 
   @override
-  State<Home> createState() => _HomeState();
-}
-
-class _HomeState extends State<Home> {
-  List<int>? selectedZodiacIds;
-  String? selectedGender;
-
-  void updateFilters(List<int> zodiacIds, String gender) {
-    setState(() {
-      selectedZodiacIds = zodiacIds;
-      selectedGender = gender;
-    });
-  }
-
-  @override
   Widget build(BuildContext context) {
+    final filterProvider = Provider.of<FilterProvider>(context);
+
     return Column(
       children: [
         HeaderHome(
-          onFiltersUpdated: updateFilters,
+          onFiltersUpdated: (zodiacIds, gender) {
+            filterProvider.updateFilters(zodiacIds, gender);
+          },
         ),
         const FeaturedSection(),
-        if (selectedZodiacIds != null && selectedGender != null)
+        if (filterProvider.selectedZodiacIds != null &&
+            filterProvider.selectedGender != null)
           Expanded(
             child: CustomCardWidget(
-              zodiacIds: selectedZodiacIds!,
-              gender: selectedGender!,
+              zodiacIds: filterProvider.selectedZodiacIds!,
+              gender: filterProvider.selectedGender!,
             ),
           ),
       ],

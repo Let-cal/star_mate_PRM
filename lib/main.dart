@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+import './pages/HomePage/filter_provider.dart';
 
 import './main_container.dart';
 import './pages/ForgotPage/forgot_page.dart';
@@ -23,6 +24,8 @@ class MyApp extends StatelessWidget {
     return MultiProvider(
       providers: [
         ChangeNotifierProvider(create: (_) => ThemeProvider()),
+        // Thêm dòng này để provider FilterProvider
+        ChangeNotifierProvider(create: (_) => FilterProvider()),
       ],
       builder: (context, child) {
         final themeProvider = context.watch<ThemeProvider>();

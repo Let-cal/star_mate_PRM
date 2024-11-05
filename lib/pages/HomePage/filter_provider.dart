@@ -12,4 +12,12 @@ class FilterProvider extends ChangeNotifier {
     _selectedGender = gender;
     notifyListeners();
   }
+
+  void clearFilters() {
+    _selectedZodiacIds = null;
+    _selectedGender = null;
+    notifyListeners();
+  }
+
+  bool get hasFilters => _selectedZodiacIds != null && _selectedGender != null;
 }

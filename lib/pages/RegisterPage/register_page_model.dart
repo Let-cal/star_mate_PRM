@@ -15,14 +15,14 @@ class RegisterPageModel extends ChangeNotifier {
 
   bool passwordVisibility = false;
   bool? checkboxListTileValue;
-   bool _isLoading = false;
+  bool _isLoading = false;
   bool get isLoading => _isLoading;
 
-   void setLoading(bool value) {
+  void setLoading(bool value) {
     _isLoading = value;
     notifyListeners();
   }
-  
+
   void initControllers() {
     textController1 = TextEditingController();
     textFieldFocusNode1 = FocusNode();

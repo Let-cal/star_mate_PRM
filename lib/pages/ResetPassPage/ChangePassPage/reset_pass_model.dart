@@ -4,7 +4,8 @@ import '../../../services/api_service.dart';
 class ResetPassModel {
   final TextEditingController emailController = TextEditingController();
   final TextEditingController passwordController = TextEditingController();
-  final TextEditingController confirmPasswordController = TextEditingController();
+  final TextEditingController confirmPasswordController =
+      TextEditingController();
 
   void _navigateToLoginPage(BuildContext context) {
     Navigator.of(context).pushNamed('/');
@@ -18,7 +19,7 @@ class ResetPassModel {
     // Validate if passwords match
     if (password != confirmPassword) {
       ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text('Passwords do not match.')),
+        const SnackBar(content: Text('Passwords do not match.')),
       );
       return;
     }
@@ -33,9 +34,9 @@ class ResetPassModel {
     if (response != null && response['success'] == true) {
       // Successful response
       ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text('Password reset successful!')),
+        const SnackBar(content: Text('Password reset successful!')),
       );
-      _navigateToLoginPage(context);  // Call the function with ()
+      _navigateToLoginPage(context); // Call the function with ()
     } else if (response != null && response['status'] == 400) {
       // Handle failure and display error message from response
       final errors = response['errors']?['Password'];
@@ -48,7 +49,7 @@ class ResetPassModel {
     } else {
       // Handle other errors or null responses
       ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text('An unexpected error occurred.')),
+        const SnackBar(content: Text('An unexpected error occurred.')),
       );
     }
   }

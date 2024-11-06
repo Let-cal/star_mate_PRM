@@ -225,4 +225,70 @@ class ApiService {
       return null;
     }
   }
+
+//update user profile
+  Future<Map<String, dynamic>?> updateUser({
+    required String fullName,
+    required String telephoneNumber,
+    required int zodiacId,
+    required String description,
+    required String email,
+  }) async {
+    try {
+      // 1. Debug userId
+      final userId = await StorageService.getUserId();
+      print('1. UserId from storage: $userId');
+
+      if (userId == null) {
+        throw Exception('Không tìm thấy userId trong storage');
+      }
+
+      // 2. Debug URL
+      final url = Uri.parse('$baseUserUrl/$userId');
+      print('2. Request URL: $url');
+
+      // 3. Debug Headers
+      final headers = {
+        'Content-Type': 'application/json',
+        'accept': '*/*',
+      };
+      print('3. Request headers: $headers');
+
+      // 4. Debug Request Body
+      final requestBody = {
+        'fullName': fullName,
+        'telephoneNumber': telephoneNumber,
+        'zodiacId': zodiacId,
+        'description': description, // Đảm bảo đúng tên field
+        'email': email,
+      };
+      print('4. Request body: ${jsonEncode(requestBody)}');
+
+      // 5. Thực hiện request và debug response
+      print('5. Đang gửi request...');
+      final response = await http.put(
+        url,
+        headers: headers,
+        body: jsonEncode(requestBody),
+      );
+
+      // 6. Debug Response
+      print('6. Response status code: ${response.statusCode}');
+      print('6. Response body: ${response.body}');
+
+      // 7. Xử lý response
+      if (response.statusCode == 200) {
+        print('7. Update successfully');
+        return jsonDecode(response.body);
+      } else {
+        print('7. Error from server: ${response.statusCode}');
+        print('7. Error body: ${response.body}');
+        throw Exception(
+            'Error from server: ${response.statusCode} - ${response.body}');
+      }
+    } catch (e) {
+      print('8. Error: $e');
+      rethrow;
+    }
+  }
 }

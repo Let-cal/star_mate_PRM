@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import '../EditProfilePage/edit_profile_page.dart';
 
 Widget accountSettingsItem(BuildContext context, String title, IconData icon) {
   return Padding(
@@ -19,7 +20,16 @@ Widget accountSettingsItem(BuildContext context, String title, IconData icon) {
         color: Colors.transparent,
         child: InkWell(
           borderRadius: BorderRadius.circular(16),
-          onTap: () {},
+          onTap: () {
+            if (title == 'Edit Profile') {
+              Navigator.push(
+                context,
+                MaterialPageRoute(
+                    builder: (context) => const EditProfilePageWidget()),
+              );
+            }
+            // Bạn có thể thêm các điều kiện khác cho các mục khác nếu cần
+          },
           child: Padding(
             padding: const EdgeInsets.all(16),
             child: Row(
@@ -27,7 +37,8 @@ Widget accountSettingsItem(BuildContext context, String title, IconData icon) {
                 Container(
                   padding: const EdgeInsets.all(8),
                   decoration: BoxDecoration(
-                    color: Theme.of(context).colorScheme.primary.withOpacity(0.1),
+                    color:
+                        Theme.of(context).colorScheme.primary.withOpacity(0.1),
                     borderRadius: BorderRadius.circular(12),
                   ),
                   child: Icon(

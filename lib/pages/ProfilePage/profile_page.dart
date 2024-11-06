@@ -6,6 +6,8 @@ import 'profile_header.dart';
 import 'profile_page_model.dart';
 import 'theme_switcher.dart';
 import '../../loading_screen.dart';
+import '../../services/storage_service.dart'; // Import StorageService
+import '../LoginPage/login_page.dart'; // Import LoginPage
 
 class ProfilePageWidget extends StatefulWidget {
   const ProfilePageWidget({super.key});
@@ -28,6 +30,14 @@ class _ProfilePageWidgetState extends State<ProfilePageWidget> {
   void dispose() {
     _model.dispose();
     super.dispose();
+  }
+
+  Future<void> _handleLogout() async {
+    await StorageService.clearUserId(); // Xóa thông tin đăng nhập
+    Navigator.pushReplacement(
+      context,
+      MaterialPageRoute(builder: (context) => const LoginPageWidget()),
+    );
   }
 
   @override
@@ -63,7 +73,10 @@ class _ProfilePageWidgetState extends State<ProfilePageWidget> {
                             padding: const EdgeInsets.symmetric(horizontal: 24),
                             child: Text(
                               'Preferences',
-                              style: Theme.of(context).textTheme.titleMedium?.copyWith(
+                              style: Theme.of(context)
+                                  .textTheme
+                                  .titleMedium
+                                  ?.copyWith(
                                     fontWeight: FontWeight.bold,
                                   ),
                             ),
@@ -74,7 +87,10 @@ class _ProfilePageWidgetState extends State<ProfilePageWidget> {
                             padding: const EdgeInsets.symmetric(horizontal: 24),
                             child: Text(
                               'Account Settings',
-                              style: Theme.of(context).textTheme.titleMedium?.copyWith(
+                              style: Theme.of(context)
+                                  .textTheme
+                                  .titleMedium
+                                  ?.copyWith(
                                     fontWeight: FontWeight.bold,
                                   ),
                             ),
@@ -87,7 +103,7 @@ class _ProfilePageWidgetState extends State<ProfilePageWidget> {
                           Padding(
                             padding: const EdgeInsets.symmetric(horizontal: 20),
                             child: ElevatedButton(
-                              onPressed: () {},
+                              onPressed: _handleLogout, // Gọi hàm _handleLogout
                               style: ElevatedButton.styleFrom(
                                 minimumSize: const Size(double.infinity, 56),
                                 shape: RoundedRectangleBorder(
@@ -105,7 +121,9 @@ class _ProfilePageWidgetState extends State<ProfilePageWidget> {
                                         .textTheme
                                         .titleMedium
                                         ?.copyWith(
-                                          color: Theme.of(context).colorScheme.onPrimaryContainer,
+                                          color: Theme.of(context)
+                                              .colorScheme
+                                              .onPrimaryContainer,
                                         ),
                                   ),
                                 ],

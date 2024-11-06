@@ -9,111 +9,155 @@ class CustomCardWidget extends StatelessWidget {
   Widget build(BuildContext context) {
     final textTheme = Theme.of(context).textTheme;
     final colorScheme = Theme.of(context).colorScheme;
-    final screenWidth = MediaQuery.of(context).size.width;
 
     return Padding(
       padding: const EdgeInsetsDirectional.fromSTEB(16, 16, 16, 0),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          Padding(
-            padding: const EdgeInsets.fromLTRB(8, 12, 0, 0),
-            child: Text(
-              'Friend list:',
-              style: textTheme.bodyMedium?.copyWith(
-                fontFamily: 'Abel',
-                fontSize: 18,
-                fontWeight: FontWeight.bold,
-              ),
+          Container(
+            padding: const EdgeInsets.fromLTRB(8, 12, 8, 16),
+            child: Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: [
+                Text(
+                  'Friend List',
+                  style: textTheme.titleLarge?.copyWith(
+                    fontFamily: 'Abel',
+                    fontSize: 24,
+                    fontWeight: FontWeight.bold,
+                    color: colorScheme.primary,
+                  ),
+                ),
+                Container(
+                  padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
+                  decoration: BoxDecoration(
+                    color: colorScheme.primaryContainer,
+                    borderRadius: BorderRadius.circular(20),
+                  ),
+                  child: Text(
+                    '${friends.length} Friends',
+                    style: textTheme.labelMedium?.copyWith(
+                      color: colorScheme.onPrimaryContainer,
+                      fontWeight: FontWeight.w600,
+                    ),
+                  ),
+                ),
+              ],
             ),
           ),
           Expanded(
             child: ListView.builder(
+              padding: const EdgeInsets.only(top: 8),
               itemCount: friends.length,
               itemBuilder: (context, index) {
                 final friend = friends[index];
-                return Container(
-                  width: screenWidth * 0.9,
-                  height: 100,
-                  margin: const EdgeInsets.only(bottom: 8),
-                  decoration: BoxDecoration(
-                    color: colorScheme.surface,
-                    borderRadius: const BorderRadius.all(Radius.circular(16)),
-                    border: Border.all(color: const Color(0xFF353333)),
+                return Card(
+                  margin: const EdgeInsets.only(bottom: 16),
+                  elevation: 2,
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(16),
                   ),
-                  child: Column(
-                    mainAxisSize: MainAxisSize.max,
-                    children: [
-                      Row(
-                        mainAxisSize: MainAxisSize.max,
-                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                        crossAxisAlignment: CrossAxisAlignment.start,
+                  child: InkWell(
+                    onTap: () {
+                      debugPrint('Friend card tapped...');
+                      // Implement navigation or dialog here
+                    },
+                    borderRadius: BorderRadius.circular(16),
+                    child: Container(
+                      padding: const EdgeInsets.all(16),
+                      child: Row(
+                        crossAxisAlignment: CrossAxisAlignment.center,
                         children: [
-                          SizedBox(
-                            width: 150,
-                            child: Padding(
-                              padding: const EdgeInsetsDirectional.fromSTEB(
-                                  12, 8, 0, 0),
+                          Container(
+                            width: 60,
+                            height: 60,
+                            decoration: BoxDecoration(
+                              color: colorScheme.primaryContainer,
+                              shape: BoxShape.circle,
+                            ),
+                            child: Center(
                               child: Text(
-                                friend['friendName'],
-                                style: textTheme.bodyLarge?.copyWith(
-                                  fontFamily: 'Abel',
-                                  fontSize: 14,
-                                  fontWeight: FontWeight.w600,
+                                friend['friendName'][0].toUpperCase(),
+                                style: textTheme.headlineMedium?.copyWith(
+                                  color: colorScheme.onPrimaryContainer,
+                                  fontWeight: FontWeight.bold,
                                 ),
                               ),
                             ),
                           ),
-                          Padding(
-                            padding: const EdgeInsetsDirectional.fromSTEB(
-                                0, 8, 0, 0),
-                            child: Text(
-                              friend['friendGender'],
-                              style: textTheme.bodyLarge?.copyWith(
-                                fontFamily: 'Abel',
-                                fontSize: 14,
-                                fontWeight: FontWeight.w600,
-                              ),
-                            ),
-                          ),
-                          Padding(
-                            padding: const EdgeInsetsDirectional.fromSTEB(
-                                0, 20, 8, 0),
-                            child: IconButton(
-                              icon: const Icon(
-                                Icons.arrow_forward_ios,
-                                color: Colors.black,
-                                size: 24,
-                              ),
-                              onPressed: () {
-                                debugPrint('IconButton pressed ...');
-                              },
-                            ),
-                          ),
-                        ],
-                      ),
-                      Row(
-                        mainAxisSize: MainAxisSize.max,
-                        children: [
-                          Align(
-                            alignment: const AlignmentDirectional(-1, 0),
-                            child: Padding(
-                              padding: const EdgeInsetsDirectional.fromSTEB(
-                                  12, 0, 0, 0),
-                              child: Text(
-                                friend['zodiacName'],
-                                style: textTheme.bodyLarge?.copyWith(
-                                  fontFamily: 'Abel',
-                                  color: const Color(0xFFE12222),
-                                  fontSize: 14,
-                                  fontWeight: FontWeight.w600,
+                          const SizedBox(width: 16),
+                          Expanded(
+                            child: Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                Row(
+                                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                  children: [
+                                    Expanded(
+                                      child: Text(
+                                        friend['friendName'],
+                                        style: textTheme.titleMedium?.copyWith(
+                                          fontWeight: FontWeight.bold,
+                                        ),
+                                        overflow: TextOverflow.ellipsis,
+                                      ),
+                                    ),
+                                    Container(
+                                      padding: const EdgeInsets.symmetric(
+                                        horizontal: 8,
+                                        vertical: 4,
+                                      ),
+                                      decoration: BoxDecoration(
+                                        color: colorScheme.surfaceContainerHighest,
+                                        borderRadius: BorderRadius.circular(12),
+                                      ),
+                                      child: Row(
+                                        mainAxisAlignment: MainAxisAlignment.center,
+                                        children: [
+                                          Text(
+                                            textAlign: TextAlign.center,
+                                            friend['friendGender'],
+                                            style: textTheme.labelMedium?.copyWith(
+                                              color: colorScheme.onSurfaceVariant,
+                                              fontWeight: FontWeight.w600,
+                                            ),
+                                          ),
+                                        ],
+                                      ),
+                                    )
+                                  ],
                                 ),
-                              ),
+                                const SizedBox(height: 8),
+                                Row(
+                                  children: [
+                                    Icon(
+                                      Icons.stars_rounded,
+                                      size: 18,
+                                      color: colorScheme.primary,
+                                    ),
+                                    const SizedBox(width: 4),
+                                    Text(
+                                      friend['zodiacName'],
+                                      style: textTheme.bodyMedium?.copyWith(
+                                        color: colorScheme.primary,
+                                        fontWeight: FontWeight.w600,
+                                      ),
+                                    ),
+                                  ],
+                                ),
+                              ],
                             ),
+                          ),
+                          const SizedBox(width: 8),
+                          Icon(
+                            Icons.arrow_forward_ios,
+                            color: colorScheme.outline,
+                            size: 20,
                           ),
                         ],
                       ),
-                    ],
+                    ),
                   ),
                 );
               },

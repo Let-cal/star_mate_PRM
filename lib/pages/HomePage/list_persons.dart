@@ -3,12 +3,14 @@ import 'package:http/http.dart' as http;
 import 'package:logger/logger.dart';
 
 class Person {
+  int id;
   String name;
   String gender;
   String zodiac;
   String description;
 
   Person({
+    required this.id,
     required this.name,
     required this.gender,
     required this.zodiac,
@@ -16,7 +18,7 @@ class Person {
   });
 }
 
-class ApiService {
+class ApiServiceHome {
   static final logger = Logger();
   static const baseUrl =
       'https://starmate-g8dkcraeardagdfb.canadacentral-01.azurewebsites.net/api';
@@ -40,6 +42,7 @@ class ApiService {
 
         List<Person> fetchedPeople = data.map((item) {
           return Person(
+            id: item['id'],
             name: item['fullName'],
             gender: item['gender'],
             zodiac: item['nameZodiac'],

@@ -9,18 +9,30 @@ class FriendPage extends StatefulWidget {
   const FriendPage({super.key});
 
   @override
-  // ignore: library_private_types_in_public_api
   _FriendPageState createState() => _FriendPageState();
 }
 
 class _FriendPageState extends State<FriendPage> {
   late Future<List<Map<String, dynamic>>?> _friendsFuture;
   bool _isLoading = false;
+  List<Map<String, dynamic>> _allFriends = [];
+  List<Map<String, dynamic>> _filteredFriends = [];
+
+  final TextEditingController _searchController = TextEditingController();
+  List<String> _selectedZodiacs = [];
+  String? _selectedGender;
 
   @override
   void initState() {
     super.initState();
     _fetchFriends();
+    _searchController.addListener(_filterFriends);
+  }
+
+  @override
+  void dispose() {
+    _searchController.dispose();
+    super.dispose();
   }
 
   void _fetchFriends() {
@@ -28,12 +40,54 @@ class _FriendPageState extends State<FriendPage> {
       _isLoading = true;
     });
     _friendsFuture = ApiService().getFriends().then((friends) {
-      // Removed `context` argument
       setState(() {
         _isLoading = false;
+        if (friends != null) {
+          // Normalize gender data
+          _allFriends = friends.map((friend) {
+            return {
+              ...friend,
+              'friendGender': friend['friendGender'].toString().toLowerCase(),
+            };
+          }).toList();
+          _filteredFriends = _allFriends;
+        }
       });
       return friends;
     });
+  }
+
+  void _filterFriends() {
+    String searchQuery = _searchController.text.toLowerCase();
+
+    setState(() {
+      _filteredFriends = _allFriends.where((friend) {
+        // Filter by name
+        bool matchesName =
+            friend['friendName'].toString().toLowerCase().contains(searchQuery);
+// Thêm log này vào hàm _filterFriends để kiểm tra
+        print('Friend gender: ${friend['friendGender']}');
+        print('Selected gender: $_selectedGender');
+        // Filter by zodiac
+        bool matchesZodiac = _selectedZodiacs.isEmpty ||
+            _selectedZodiacs.contains(friend['zodiacName']);
+
+        // Filter by gender - Make sure the case matches
+        bool matchesGender = _selectedGender == null ||
+            friend['friendGender'].toString().toLowerCase() ==
+                _selectedGender?.toLowerCase();
+
+        return matchesName && matchesZodiac && matchesGender;
+      }).toList();
+    });
+  }
+
+  void _applyFilter(List<String> selectedZodiacs, String? selectedGender) {
+    setState(() {
+      _selectedZodiacs = selectedZodiacs;
+      _selectedGender = selectedGender?.toLowerCase(); // Normalize to lowercase
+    });
+    _filterFriends();
   }
 
   @override
@@ -42,24 +96,16 @@ class _FriendPageState extends State<FriendPage> {
       children: [
         Column(
           children: [
-            const HeaderFriend(),
+            HeaderFriend(
+              searchController: _searchController,
+              onFilterSelected: _applyFilter,
+            ),
             Expanded(
-              child: FutureBuilder<List<Map<String, dynamic>>?>(
-                future: _friendsFuture,
-                builder: (context, snapshot) {
-                  if (snapshot.connectionState == ConnectionState.waiting ||
-                      _isLoading) {
-                    return const LoadingScreen(isLoading: true);
-                  } else if (snapshot.hasError) {
-                    return Center(child: Text('Error: ${snapshot.error}'));
-                  } else if (!snapshot.hasData || snapshot.data!.isEmpty) {
-                    return const Center(child: Text('No friends found.'));
-                  } else {
-                    final friends = snapshot.data!;
-                    return CustomCardWidget(friends: friends);
-                  }
-                },
-              ),
+              child: _isLoading
+                  ? const LoadingScreen(isLoading: true)
+                  : _filteredFriends.isEmpty
+                      ? const Center(child: Text('No friends found.'))
+                      : CustomCardWidget(friends: _filteredFriends),
             ),
           ],
         ),

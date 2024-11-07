@@ -57,7 +57,7 @@ class CustomCardWidget extends StatelessWidget {
           ),
           Expanded(
             child: FutureBuilder<List<Person>>(
-              future: ApiService.fetchPeople(zodiacIds, gender),
+              future: ApiServiceHome.fetchPeople(zodiacIds, gender),
               builder: (context, snapshot) {
                 if (snapshot.connectionState == ConnectionState.waiting) {
                   return Center(

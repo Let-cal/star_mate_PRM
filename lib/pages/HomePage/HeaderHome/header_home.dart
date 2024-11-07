@@ -1,6 +1,9 @@
 import 'package:flutter/material.dart';
-import './filter_provider.dart';
 import 'package:provider/provider.dart';
+
+import '../filter_provider.dart';
+import './friend_request_provider.dart';
+import 'notificaiton_fragment.dart';
 
 class HeaderHome extends StatefulWidget {
   final Function(List<int> zodiacIds, String gender) onFiltersUpdated;
@@ -15,7 +18,24 @@ class HeaderHome extends StatefulWidget {
 }
 
 class _HeaderHomeState extends State<HeaderHome> {
-  // Hàm mở bottom sheet
+  // Load friend requests when the widget is initialized
+ @override
+  void initState() {
+    super.initState();
+    // Fetch friend requests as soon as HeaderHome is loaded
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      Provider.of<FriendRequestProvider>(context, listen: false)
+          .fetchFriendRequests();
+    });
+  }
+
+  void _showNotificationFragment() {
+    Navigator.push(
+      context,
+      MaterialPageRoute(builder: (context) => const NotificationFragment()),
+    );
+  }
+
   void _showSortBottomSheet(BuildContext context) async {
     final result = await showModalBottomSheet<Map<String, dynamic>>(
       context: context,
@@ -34,6 +54,8 @@ class _HeaderHomeState extends State<HeaderHome> {
 
   @override
   Widget build(BuildContext context) {
+    final friendRequestProvider = Provider.of<FriendRequestProvider>(context);
+
     return Container(
       margin: const EdgeInsets.only(top: 20), // Thêm margin ở trên
       child: Padding(
@@ -79,12 +101,34 @@ class _HeaderHomeState extends State<HeaderHome> {
                 ),
                 // Notification icon
                 IconButton(
-                  icon: const Icon(Icons.notifications_none, size: 24),
-                  color: Theme.of(context).iconTheme.color,
-                  onPressed: () {
-                    debugPrint('Notification button pressed');
-                  },
-                ),
+                  icon: Stack(
+                    children: [
+                      const Icon(Icons.notifications_none, size: 24),
+                      if (friendRequestProvider.totalFriendRequests > 0)
+                        Positioned(
+                          top: -4,
+                          right: -4,
+                          child: Container(
+                            padding: const EdgeInsets.all(4),
+                            decoration: const BoxDecoration(
+                              color: Colors.red,
+                              shape: BoxShape.circle,
+                            ),
+                            child: Text(
+                              friendRequestProvider.totalFriendRequests
+                                  .toString(),
+                              style: const TextStyle(
+                                color: Colors.white,
+                                fontSize: 12,
+                                fontWeight: FontWeight.bold,
+                              ),
+                            ),
+                          ),
+                        ),
+                    ],
+                  ),
+                  onPressed: _showNotificationFragment,
+                )
               ],
             ),
             // Search and Sort Container

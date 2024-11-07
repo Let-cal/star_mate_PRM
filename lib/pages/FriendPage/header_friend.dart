@@ -1,14 +1,22 @@
 import 'package:flutter/material.dart';
 
 class HeaderFriend extends StatelessWidget {
-  const HeaderFriend({super.key});
+  final TextEditingController searchController;
+  final Function(List<String>, String?) onFilterSelected;
 
-  // Hàm mở bottom sheet
+  const HeaderFriend({
+    Key? key,
+    required this.searchController,
+    required this.onFilterSelected,
+  }) : super(key: key);
+
   void _showSortBottomSheet(BuildContext context) {
     showModalBottomSheet(
       context: context,
       builder: (BuildContext context) {
-        return const SortBottomSheet();
+        return SortBottomSheet(
+          onApplyFilter: onFilterSelected,
+        );
       },
     );
   }
@@ -16,7 +24,7 @@ class HeaderFriend extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Container(
-      margin: const EdgeInsets.only(top: 20), // Thêm margin ở trên
+      margin: const EdgeInsets.only(top: 20),
       child: Padding(
         padding: const EdgeInsetsDirectional.fromSTEB(16, 0, 16, 0),
         child: Column(
@@ -47,24 +55,16 @@ class HeaderFriend extends StatelessWidget {
                     ),
                   ),
                 ),
-                // Welcome text
+                // Title text
                 Expanded(
                   child: Text(
-                    'Welcome, Bao',
+                    'My Friends',
                     style: Theme.of(context).textTheme.bodyLarge?.copyWith(
                           color: Colors.black,
                           fontSize: 24,
                           fontWeight: FontWeight.w500,
                         ),
                   ),
-                ),
-                // Notification icon
-                IconButton(
-                  icon: const Icon(Icons.notifications_none, size: 24),
-                  color: Theme.of(context).iconTheme.color,
-                  onPressed: () {
-                    debugPrint('Notification button pressed');
-                  },
                 ),
               ],
             ),
@@ -89,8 +89,7 @@ class HeaderFriend extends StatelessWidget {
                       ],
                       borderRadius: BorderRadius.circular(12),
                       border: Border.all(
-                        color:
-                            Theme.of(context).dividerColor, // Màu viền từ theme
+                        color: Theme.of(context).dividerColor,
                       ),
                     ),
                     child: Padding(
@@ -101,9 +100,7 @@ class HeaderFriend extends StatelessWidget {
                         children: [
                           Icon(
                             Icons.search_rounded,
-                            color: Theme.of(context)
-                                .iconTheme
-                                .color, // Màu icon từ theme
+                            color: Theme.of(context).iconTheme.color,
                             size: 24,
                           ),
                           Expanded(
@@ -111,13 +108,14 @@ class HeaderFriend extends StatelessWidget {
                               padding: const EdgeInsetsDirectional.fromSTEB(
                                   4, 0, 0, 0),
                               child: TextFormField(
+                                controller: searchController,
                                 decoration: InputDecoration(
-                                  labelText: 'Search listings...',
+                                  labelText: 'Search by name...',
                                   labelStyle: TextStyle(
                                     color: Theme.of(context)
                                         .textTheme
                                         .bodyMedium!
-                                        .color, // Màu chữ từ theme
+                                        .color,
                                     fontSize: 14,
                                     fontWeight: FontWeight.w500,
                                   ),
@@ -132,27 +130,22 @@ class HeaderFriend extends StatelessWidget {
                                   color: Theme.of(context)
                                       .textTheme
                                       .bodyLarge!
-                                      .color, // Màu chữ từ theme
+                                      .color,
                                   fontSize: 14,
                                   fontWeight: FontWeight.w500,
                                 ),
-                                cursorColor: Theme.of(context)
-                                    .colorScheme
-                                    .primary, // Màu con trỏ từ theme
+                                cursorColor:
+                                    Theme.of(context).colorScheme.primary,
                               ),
                             ),
                           ),
                           IconButton(
                             icon: Icon(
                               Icons.tune_rounded,
-                              color: Theme.of(context)
-                                  .iconTheme
-                                  .color, // Màu icon từ theme
+                              color: Theme.of(context).iconTheme.color,
                               size: 24,
                             ),
-                            onPressed: () {
-                              _showSortBottomSheet(context);
-                            },
+                            onPressed: () => _showSortBottomSheet(context),
                           ),
                         ],
                       ),
@@ -168,26 +161,39 @@ class HeaderFriend extends StatelessWidget {
   }
 }
 
-// Bottom sheet để chọn cung hoàng đạo và giới tính
 class SortBottomSheet extends StatefulWidget {
-  const SortBottomSheet({super.key});
+  final Function(List<String>, String?) onApplyFilter;
+
+  const SortBottomSheet({
+    super.key,
+    required this.onApplyFilter,
+  });
 
   @override
   State<SortBottomSheet> createState() => _SortBottomSheetState();
 }
 
 class _SortBottomSheetState extends State<SortBottomSheet> {
-  final List<List<String>> zodiacSignsByElement = [
-    ['Aries', 'Leo', 'Sagittarius'],
-    ['Taurus', 'Virgo', 'Capricorn'],
-    ['Cancer', 'Scorpio', 'Pisces'],
-    ['Gemini', 'Libra', 'Aquarius'],
+  final List<String> zodiacSigns = [
+    'Aries',
+    'Taurus',
+    'Gemini',
+    'Cancer',
+    'Leo',
+    'Virgo',
+    'Libra',
+    'Scorpio',
+    'Sagittarius',
+    'Capricorn',
+    'Aquarius',
+    'Pisces'
   ];
 
-  final List<String> genders = ['Male', 'Female'];
+  final List<String> genders = ['male', 'female'];
 
   List<String> selectedZodiacs = [];
   String? selectedGender;
+  String errorMessage = '';
 
   Widget buildChoiceChip({
     required String label,
@@ -241,51 +247,81 @@ class _SortBottomSheetState extends State<SortBottomSheet> {
         borderRadius: const BorderRadius.vertical(top: Radius.circular(20)),
       ),
       child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          Text(
-            'Choose Zodiac Signs (Max 3):',
-            style: TextStyle(
-              fontSize: 16,
-              fontWeight: FontWeight.bold,
-              color: Theme.of(context).colorScheme.onSurface,
+          if (errorMessage.isNotEmpty)
+            Padding(
+              padding: const EdgeInsets.only(right: 8, bottom: 8),
+              child: Text(
+                errorMessage,
+                style: const TextStyle(
+                  color: Colors.red,
+                  fontSize: 12,
+                  fontWeight: FontWeight.bold,
+                ),
+              ),
+            ),
+          Center(
+            child: Text(
+              'Choose Zodiac Signs (Max 3):',
+              style: TextStyle(
+                fontSize: 16,
+                fontWeight: FontWeight.bold,
+                color: Theme.of(context).colorScheme.onSurface,
+              ),
+              textAlign: TextAlign.center,
             ),
           ),
           const SizedBox(height: 8),
           Expanded(
             child: Column(
-              children: zodiacSignsByElement.map((zodiacRow) {
-                return Padding(
-                  padding: const EdgeInsets.symmetric(vertical: 4),
-                  child: Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                    children: zodiacRow.map((zodiac) {
-                      return buildChoiceChip(
-                        label: zodiac,
-                        selected: selectedZodiacs.contains(zodiac),
-                        onSelected: (isSelected) {
-                          setState(() {
-                            if (isSelected && selectedZodiacs.length < 3) {
-                              selectedZodiacs.add(zodiac);
-                            } else {
-                              selectedZodiacs.remove(zodiac);
-                            }
-                          });
-                        },
-                        width: chipWidth,
-                      );
-                    }).toList(),
-                  ),
-                );
-              }).toList(),
+              children: List.generate(
+                zodiacSigns.length ~/ 3 + (zodiacSigns.length % 3 == 0 ? 0 : 1),
+                (rowIndex) {
+                  final startIndex = rowIndex * 3;
+                  final endIndex = (rowIndex + 1) * 3;
+                  final zodiacRow = zodiacSigns.sublist(
+                    startIndex,
+                    endIndex > zodiacSigns.length
+                        ? zodiacSigns.length
+                        : endIndex,
+                  );
+                  return Padding(
+                    padding: const EdgeInsets.symmetric(vertical: 4),
+                    child: Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      children: zodiacRow.map((zodiac) {
+                        return buildChoiceChip(
+                          label: zodiac,
+                          selected: selectedZodiacs.contains(zodiac),
+                          onSelected: (isSelected) {
+                            setState(() {
+                              if (isSelected && selectedZodiacs.length < 3) {
+                                selectedZodiacs.add(zodiac);
+                              } else {
+                                selectedZodiacs.remove(zodiac);
+                              }
+                            });
+                          },
+                          width: chipWidth,
+                        );
+                      }).toList(),
+                    ),
+                  );
+                },
+              ),
             ),
           ),
           const SizedBox(height: 8),
-          Text(
-            'Choose Gender:',
-            style: TextStyle(
-              fontSize: 16,
-              fontWeight: FontWeight.bold,
-              color: Theme.of(context).colorScheme.onSurface,
+          Center(
+            child: Text(
+              'Choose Gender:',
+              style: TextStyle(
+                fontSize: 16,
+                fontWeight: FontWeight.bold,
+                color: Theme.of(context).colorScheme.onSurface,
+              ),
+              textAlign: TextAlign.center,
             ),
           ),
           const SizedBox(height: 8),
@@ -295,11 +331,14 @@ class _SortBottomSheetState extends State<SortBottomSheet> {
               return Padding(
                 padding: const EdgeInsets.symmetric(horizontal: 8),
                 child: buildChoiceChip(
-                  label: gender,
-                  selected: selectedGender == gender,
+                  label: gender[0].toUpperCase() +
+                      gender
+                          .substring(1), // Capitalize first letter for display
+                  selected:
+                      selectedGender?.toLowerCase() == gender.toLowerCase(),
                   onSelected: (isSelected) {
                     setState(() {
-                      selectedGender = isSelected ? gender : null;
+                      selectedGender = isSelected ? gender.toLowerCase() : null;
                     });
                   },
                   width: 120,
@@ -313,7 +352,18 @@ class _SortBottomSheetState extends State<SortBottomSheet> {
             height: 48,
             child: ElevatedButton(
               onPressed: () {
-                Navigator.pop(context);
+                if (selectedZodiacs.isEmpty || selectedGender == null) {
+                  setState(() {
+                    errorMessage =
+                        'Please select at least one zodiac and gender.';
+                  });
+                } else {
+                  setState(() {
+                    errorMessage = '';
+                  });
+                  widget.onApplyFilter(selectedZodiacs, selectedGender);
+                  Navigator.pop(context);
+                }
               },
               style: ElevatedButton.styleFrom(
                 foregroundColor: Theme.of(context).colorScheme.onPrimary,

@@ -2,17 +2,23 @@ import 'dart:convert';
 
 // ignore: depend_on_referenced_packages
 import 'package:http/http.dart' as http;
+import 'package:logger/logger.dart';
 
 import '../pages/ProfilePage/user_model.dart';
 import './storage_service.dart';
 
 class ApiService {
+  static final Logger logger = Logger();
   static const String baseUrl =
       'https://starmate-g8dkcraeardagdfb.canadacentral-01.azurewebsites.net/api/authentication';
   static const String baseUserUrl =
       'https://starmate-g8dkcraeardagdfb.canadacentral-01.azurewebsites.net/api/users';
-  static const String baseFriendUrl =
+  static const String baseFriendUserUrl =
       'https://starmate-g8dkcraeardagdfb.canadacentral-01.azurewebsites.net/api/Friend/user/';
+
+  static const String baseFriendUrl =
+      'https://starmate-g8dkcraeardagdfb.canadacentral-01.azurewebsites.net/api/Friend';
+
   // Hàm đăng ký tài khoản
   Future<Map<String, dynamic>?> register({
     required String email,
@@ -206,7 +212,7 @@ class ApiService {
     final userId = await StorageService.getUserId();
     if (userId == null) return null;
 
-    final url = Uri.parse('$baseFriendUrl$userId');
+    final url = Uri.parse('$baseFriendUserUrl$userId');
     final headers = {
       'accept': 'text/plain',
     };
@@ -225,4 +231,159 @@ class ApiService {
       return null;
     }
   }
+
+  // Add this function in ApiService
+  static Future<void> sendFriendRequest(int friendId) async {
+    final userId =
+        await StorageService.getUserId(); // Retrieve the stored user ID
+    if (userId == null) throw Exception("User ID not found in storage.");
+
+    const url = baseFriendUrl;
+    final requestBody = jsonEncode({
+      "id": 0, // Keep 0 as specified
+      "userId": userId,
+      "friendId": friendId
+    });
+
+    final response = await http.post(
+      Uri.parse(url),
+      headers: {"Content-Type": "application/json"},
+      body: requestBody,
+    );
+
+    if (response.statusCode == 200) {
+      final responseData = json.decode(response.body);
+      if (responseData['success'] == true) {
+        ApiService.logger.i('Friend request sent successfully.');
+      } else {
+        ApiService.logger
+            .w('Failed to send friend request: ${responseData['message']}');
+      }
+    } else {
+      ApiService.logger.e(
+          'Error sending friend request: ${response.statusCode} - ${response.body}');
+      throw Exception('Failed to send friend request.');
+    }
+  }
+
+       static Future<List<dynamic>> getFriendRequests(int userId) async {
+    final url = '$baseFriendUrl/FriendRequestIncome/$userId';
+
+    final response = await http.get(Uri.parse(url), headers: {
+      "Content-Type": "application/json",
+      "accept": "text/plain",
+    });
+
+    if (response.statusCode == 200) {
+      final responseData = json.decode(response.body);
+      if (responseData['success'] == true) {
+        logger.i('Friend requests fetched successfully.');
+        return responseData['data'] ?? [];
+      } else {
+        logger.w('Failed to fetch friend requests: ${responseData['message']}');
+      }
+    } else {
+      logger.e('Error fetching friend requests: ${response.statusCode}');
+    }
+    return [];
+  }
+
+   static Future<Map<String, dynamic>> acceptFriendRequest({
+    required int userId,
+    required int friendId,
+  }) async {
+    final url = Uri.parse('$baseFriendUrl/accept').replace(
+      queryParameters: {
+        'userId': userId.toString(),
+        'friendId': friendId.toString(),
+      },
+    );
+
+    try {
+      final response = await http.put(
+        url,
+        headers: {
+          "Content-Type": "application/json",
+          "accept": "*/*",
+        },
+      );
+
+      final responseData = json.decode(response.body);
+      logger.i('Accept friend request response: $responseData');
+      
+      return {
+        'success': response.statusCode == 200 && responseData['success'] == true,
+        'message': responseData['message'] ?? 'Unknown error occurred',
+        'data': responseData['data'],
+      };
+    } catch (e) {
+      logger.e('Error accepting friend request: $e');
+      return {
+        'success': false,
+        'message': 'Failed to accept friend request',
+        'error': e.toString(),
+      };
+    }
+  }
+
+  static Future<Map<String, dynamic>> declineFriendRequest({
+    required int userId,
+    required int friendId,
+  }) async {
+    final url = Uri.parse('$baseFriendUrl/decline').replace(
+      queryParameters: {
+        'userId': userId.toString(),
+        'friendId': friendId.toString(),
+      },
+    );
+
+    try {
+      final response = await http.put(
+        url,
+        headers: {
+          "Content-Type": "application/json",
+          "accept": "*/*",
+        },
+      );
+
+      final responseData = json.decode(response.body);
+      logger.i('Decline friend request response: $responseData');
+
+      return {
+        'success': response.statusCode == 200 && responseData['success'] == true,
+        'message': responseData['message'] ?? 'Unknown error occurred',
+        'data': responseData['data'],
+      };
+    } catch (e) {
+      logger.e('Error declining friend request: $e');
+      return {
+        'success': false,
+        'message': 'Failed to decline friend request',
+        'error': e.toString(),
+      };
+    }
+  }
+
+  static Future<List<dynamic>> getSentFriendRequests(int userId) async {
+  final url = '$baseFriendUrl/FriendRequest/$userId';
+
+  final response = await http.get(Uri.parse(url), headers: {
+    "Content-Type": "application/json",
+    "accept": "text/plain",
+  });
+
+  if (response.statusCode == 200) {
+    final responseData = json.decode(response.body);
+    if (responseData['success'] == true) {
+      logger.i('Sent friend requests fetched successfully.');
+      return responseData['data'] ?? [];
+    } else {
+      logger.w('Failed to fetch sent friend requests: ${responseData['message']}');
+    }
+  } else {
+    logger.e('Error fetching sent friend requests: ${response.statusCode}');
+  }
+  return [];
+}
+
 }

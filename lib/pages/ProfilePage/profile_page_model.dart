@@ -25,7 +25,7 @@ class ProfilePageModel extends ChangeNotifier {
 
     final apiService = ApiService();
     final user = await apiService.getUserInfo();
-    
+
     currentUser = user;
     isLoading = false;
     notifyListeners();

@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-// import '../../../loading_screen.dart';
 import '../RegisterPage/widgets/custom_button.dart';
 import '../RegisterPage/widgets/custom_text_field.dart';
 import 'edit_profile_model.dart';
@@ -17,6 +16,7 @@ class EditProfileForm extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Stack(
+      fit: StackFit.expand,
       children: [
         Align(
           alignment: Alignment.center,
@@ -43,13 +43,6 @@ class EditProfileForm extends StatelessWidget {
             ),
           ),
         ),
-        if (model.isLoading)
-          Container(
-            color: Colors.black.withOpacity(0.5),
-            child: const Center(
-              child: CircularProgressIndicator(),
-            ),
-          ),
       ],
     );
   }

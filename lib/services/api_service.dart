@@ -20,11 +20,13 @@ class ApiService {
       'https://starmate-g8dkcraeardagdfb.canadacentral-01.azurewebsites.net/api/Friend';
 
   // Hàm đăng ký tài khoản
-  Future<Map<String, dynamic>?> register({
+  Future<Map<String, dynamic>> register({
     required String email,
     required String password,
     required String fullName,
     required String telephoneNumber,
+    required String gender,
+    required int zodiacId,
   }) async {
     final url = Uri.parse('$baseUrl/register');
     final headers = {
@@ -36,22 +38,29 @@ class ApiService {
       'password': password,
       'fullName': fullName,
       'telephoneNumber': telephoneNumber,
+      'gender': gender,
+      'zodiacId': zodiacId,
     });
 
     try {
       final response = await http.post(url, headers: headers, body: body);
-
       final responseData = jsonDecode(response.body);
-      if (response.statusCode == 200) {
-        return responseData; // Success response
-      } else {
-        // Print the error message from the API response
-        print('Error: ${response.statusCode} - ${responseData['message']}');
-        return responseData; // Return the responseData for further handling
-      }
+
+      // Chuẩn hóa response format
+      return {
+        'success': response.statusCode == 200,
+        'message': responseData['message'] ??
+            (response.statusCode == 200
+                ? 'Registration successful!'
+                : 'Registration failed'),
+        'data': responseData
+      };
     } catch (e) {
-      print('Error: $e');
-      return null;
+      return {
+        'success': false,
+        'message': 'Network error occurred. Please try again.',
+        'error': e.toString()
+      };
     }
   }
 

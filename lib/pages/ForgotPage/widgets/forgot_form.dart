@@ -1,9 +1,10 @@
-// widgets/forgot_form.dart
+// forgot_form.dart
 import 'package:flutter/material.dart';
-import '../forgot_page_model.dart';
+
+import '../../../services/api_service.dart';
 import '../../widgets/custom_button.dart';
 import '../../widgets/custom_text_field.dart';
-import '../../../services/api_service.dart';
+import '../forgot_page_model.dart';
 
 class ForgotForm extends StatelessWidget {
   final ForgotPageModel model;
@@ -87,48 +88,61 @@ class ForgotForm extends StatelessWidget {
 
           // Check if email is empty
           if (email == null || email.isEmpty) {
-            ScaffoldMessenger.of(context).showSnackBar(
-              const SnackBar(content: Text('Please enter your email address.')),
-            );
+            if (context.mounted) {
+              ScaffoldMessenger.of(context).showSnackBar(
+                const SnackBar(
+                    content: Text('Please enter your email address.')),
+              );
+            }
             return;
           }
 
           // Call the Forgot Password API
           final apiService = ApiService();
           final response = await apiService.forgotPassword(email);
-
+          print(email);
           if (response != null && response['success'] == true) {
-            // ignore: use_build_context_synchronously
-            ScaffoldMessenger.of(context).showSnackBar(
-              const SnackBar(
-                content:
-                    Text('Password reset instructions sent to your email.'),
-              ),
-            );
-            // Navigate to ResetPassPage with the email
-          // ignore: use_build_context_synchronously
-          _navigateToSentOTP(context, email);
+            // Ensure context is mounted before showing snackbar
+            _showSuccessSnackBar(context);
+
+            // Use Future.delayed to delay the navigation and ensure context is valid
+            Future.delayed(const Duration(milliseconds: 200), () {
+              if (context.mounted) {
+                Navigator.of(context).pushNamed(
+                  '/sent_otp',
+                  arguments: email, // Pass the email as an argument
+                );
+              }
+            });
           } else {
-            // ignore: use_build_context_synchronously
-            ScaffoldMessenger.of(context).showSnackBar(
-              SnackBar(
-                content: Text(response != null
-                    ? response['message'] ??
-                        'Failed to send reset instructions.'
-                    : 'Failed to send reset instructions.'),
-              ),
-            );
+            _showFailureSnackBar(context, response);
           }
         },
         text: 'Send Reset Instructions',
       ),
     );
   }
-  void _navigateToSentOTP(BuildContext context, String email) {
-  Navigator.of(context).pushNamed(
-    '/sent_otp',
-    arguments: email, // Pass the email as an argument
-  );
-}
 
+  void _showSuccessSnackBar(BuildContext context) {
+    if (context.mounted) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(
+            content: Text('Password reset instructions sent to your email.')),
+      );
+    }
+  }
+
+  void _showFailureSnackBar(BuildContext context, dynamic response) {
+    if (context.mounted) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text(
+            response != null
+                ? response['message'] ?? 'Failed to send reset instructions.'
+                : 'Failed to send reset instructions.',
+          ),
+        ),
+      );
+    }
+  }
 }

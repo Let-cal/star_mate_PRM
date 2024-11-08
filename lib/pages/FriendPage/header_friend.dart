@@ -5,10 +5,10 @@ class HeaderFriend extends StatelessWidget {
   final Function(List<String>, String?) onFilterSelected;
 
   const HeaderFriend({
-    Key? key,
+    super.key,
     required this.searchController,
     required this.onFilterSelected,
-  }) : super(key: key);
+  });
 
   void _showSortBottomSheet(BuildContext context) {
     showModalBottomSheet(

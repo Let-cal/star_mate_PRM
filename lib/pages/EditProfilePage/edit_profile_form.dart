@@ -152,7 +152,7 @@ class EditProfileForm extends StatelessWidget {
                   content:
                       Text(' ${e.toString().replaceAll('Exception:', '')}'),
                   backgroundColor: Colors.red,
-                  duration: Duration(seconds: 3),
+                  duration: const Duration(seconds: 3),
                 ),
               );
             }

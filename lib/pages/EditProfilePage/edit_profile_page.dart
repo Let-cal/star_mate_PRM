@@ -6,7 +6,7 @@ import '../../services/api_service.dart';
 import '../../../loading_screen.dart'; // Import LoadingScreen
 
 class EditProfilePageWidget extends StatefulWidget {
-  const EditProfilePageWidget({Key? key}) : super(key: key);
+  const EditProfilePageWidget({super.key});
 
   @override
   _EditProfilePageWidgetState createState() => _EditProfilePageWidgetState();

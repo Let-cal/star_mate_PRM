@@ -1,6 +1,7 @@
 import 'dart:convert';
 import 'package:http/http.dart' as http;
 import 'package:logger/logger.dart';
+import '../../services/storage_service.dart';
 
 class Person {
   int id;
@@ -26,9 +27,16 @@ class ApiServiceHome {
   static Future<List<Person>> fetchPeople(
       List<int> zodiacIds, String gender) async {
     try {
-      // Construct the URL with multiple zodiacIds
+      // Get userId from storage
+      final userId = await StorageService.getUserId();
+      if (userId == null) {
+        throw Exception('UserId not found in storage');
+      }
+
+      // Construct the URL with multiple zodiacIds and userId
       final zodiacParams = zodiacIds.map((id) => 'zodiacIds=$id').join('&');
-      final url = '$baseUrl/users/random?$zodiacParams&gender=$gender';
+      final url =
+          '$baseUrl/users/random?$zodiacParams&gender=$gender&userId=$userId';
 
       logger.d('Fetching from URL: $url'); // Debug log
 

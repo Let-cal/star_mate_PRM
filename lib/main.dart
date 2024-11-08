@@ -10,6 +10,7 @@ import './pages/ProfilePage/theme_provider.dart';
 import './pages/RegisterPage/register_page_widget.dart';
 import 'pages/ResetPassPage/ChangePassPage/reset_pass_page.dart';
 import 'pages/ResetPassPage/SentOPT/sent_OTP.dart';
+import './services/api_service.dart';
 import 'theme/theme.dart';
 import 'theme/util.dart';
 
@@ -28,6 +29,7 @@ class MyApp extends StatelessWidget {
         // Thêm dòng này để provider FilterProvider
         ChangeNotifierProvider(create: (_) => FilterProvider()),
         ChangeNotifierProvider(create: (_) => FriendRequestProvider()),
+        Provider(create: (_) => ApiService()),
       ],
       builder: (context, child) {
         final themeProvider = context.watch<ThemeProvider>();

@@ -6,8 +6,8 @@ import 'profile_header.dart';
 import 'profile_page_model.dart';
 import 'theme_switcher.dart';
 import '../../loading_screen.dart';
-import '../../services/storage_service.dart'; // Import StorageService
-import '../LoginPage/login_page.dart'; // Import LoginPage
+import '../../services/storage_service.dart';
+import '../LoginPage/login_page.dart';
 
 class ProfilePageWidget extends StatefulWidget {
   const ProfilePageWidget({super.key});

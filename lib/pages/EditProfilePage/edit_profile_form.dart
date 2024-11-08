@@ -89,7 +89,7 @@ class EditProfileForm extends StatelessWidget {
             labelStyle: Theme.of(context).textTheme.labelLarge,
             border: const OutlineInputBorder(),
           ),
-          maxLines: null, // Allows multi-line input
+          maxLines: null, // Cho phép nhập nhiều dòng
           keyboardType: TextInputType.multiline,
           textCapitalization: TextCapitalization.sentences,
           style: Theme.of(context).textTheme.bodyLarge,
@@ -131,13 +131,9 @@ class EditProfileForm extends StatelessWidget {
       child: CustomButton(
         onPressed: () async {
           try {
-            // Show loading indicator
             model.setLoading(true);
-
-            // Gọi hàm cập nhật
             await model.updateProfile();
 
-            // Hiển thị thông báo thành công
             if (context.mounted) {
               ScaffoldMessenger.of(context).showSnackBar(
                 const SnackBar(
@@ -146,9 +142,10 @@ class EditProfileForm extends StatelessWidget {
                   duration: Duration(seconds: 2),
                 ),
               );
+              // Pop với result true để báo hiệu đã update thành công
+              Navigator.of(context).pop(true);
             }
           } catch (e) {
-            // Hiển thị thông báo lỗi
             if (context.mounted) {
               ScaffoldMessenger.of(context).showSnackBar(
                 SnackBar(
@@ -160,7 +157,6 @@ class EditProfileForm extends StatelessWidget {
               );
             }
           } finally {
-            // Hide loading indicator
             model.setLoading(false);
           }
         },

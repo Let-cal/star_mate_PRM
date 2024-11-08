@@ -1,9 +1,9 @@
 import 'dart:math' show min;
-
+import 'package:provider/provider.dart';
 import 'package:flutter/material.dart';
-
-import 'list_persons.dart'; // Import file chứa Person model
-
+import 'package:star_mate/pages/HomePage/list_persons.dart'; // Import file chứa Person model
+import 'package:star_mate/services/api_service.dart';
+import 'HeaderHome/friend_request_provider.dart';
 class PersonDetailsDialog extends StatelessWidget {
   final Person person;
 
@@ -170,9 +170,29 @@ class PersonDetailsDialog extends StatelessWidget {
                 children: [
                   Expanded(
                     child: ElevatedButton.icon(
-                      onPressed: () {
-                        // Add friend functionality
-                        print('Add friend for ${person.name}');
+                      onPressed: () async {
+                        try {
+                          await ApiService.sendFriendRequest(person.id);
+                           await Provider.of<FriendRequestProvider>(context, listen: false).fetchFriendRequests();
+                          // Show success bottom sheet
+                          _showBottomSheetNotification(
+                            // ignore: use_build_context_synchronously
+                            context,
+                            'Friend request sent to ${person.name} successfully!',
+                            Icons.check_circle,
+                            colorScheme.primary,
+                          );
+                        } catch (e) {
+                          // Show error bottom sheet with API message
+
+                          _showBottomSheetNotification(
+                            // ignore: use_build_context_synchronously
+                            context,
+                            'Friendship already exists!',
+                            Icons.error,
+                            Colors.red,
+                          );
+                        }
                       },
                       style: ElevatedButton.styleFrom(
                         backgroundColor: colorScheme.primary,
@@ -205,9 +225,39 @@ class PersonDetailsDialog extends StatelessWidget {
       ),
     );
   }
+
+  void _showBottomSheetNotification(
+      BuildContext context, String message, IconData icon, Color color) {
+    showModalBottomSheet(
+      context: context,
+      backgroundColor: Colors.white,
+      shape: const RoundedRectangleBorder(
+        borderRadius: BorderRadius.vertical(top: Radius.circular(16)),
+      ),
+      builder: (context) => Padding(
+        padding: const EdgeInsets.all(16.0),
+        child: Row(
+          children: [
+            Icon(icon, color: color, size: 28),
+            const SizedBox(width: 12),
+            Expanded(
+              child: Text(
+                message,
+                style: TextStyle(
+                  color: color,
+                  fontSize: 16,
+                  fontWeight: FontWeight.w600,
+                ),
+              ),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
 }
 
-// Function helper để show dialog
+// Function helper to show dialog
 void showPersonDetailsDialog(BuildContext context, Person person) {
   showDialog(
     context: context,

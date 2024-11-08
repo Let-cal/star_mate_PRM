@@ -1,9 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-import './pages/HomePage/filter_provider.dart';
 
 import './main_container.dart';
 import './pages/ForgotPage/forgot_page.dart';
+import './pages/HomePage/HeaderHome/friend_request_provider.dart';
+import './pages/HomePage/filter_provider.dart';
 import './pages/LoginPage/login_page.dart';
 import './pages/ProfilePage/theme_provider.dart';
 import './pages/RegisterPage/register_page_widget.dart';
@@ -25,7 +26,9 @@ class MyApp extends StatelessWidget {
     return MultiProvider(
       providers: [
         ChangeNotifierProvider(create: (_) => ThemeProvider()),
+        // Thêm dòng này để provider FilterProvider
         ChangeNotifierProvider(create: (_) => FilterProvider()),
+        ChangeNotifierProvider(create: (_) => FriendRequestProvider()),
         Provider(create: (_) => ApiService()),
       ],
       builder: (context, child) {

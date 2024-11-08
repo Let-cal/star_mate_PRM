@@ -1,12 +1,27 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'content_home.dart';
-import 'header_home.dart';
+import 'HeaderHome/header_home.dart';
 import 'featured_section.dart';
 import './filter_provider.dart';
-
-class Home extends StatelessWidget {
+import './HeaderHome/friend_request_provider.dart';
+class Home extends StatefulWidget {
   const Home({super.key});
+  @override
+  // ignore: library_private_types_in_public_api
+  _HomeState createState() => _HomeState();
+}
+class _HomeState extends State<Home> {
+  @override
+  void initState() {
+    super.initState();
+    // Trigger the fetchFriendRequests when Home widget is initialized
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      // Fetch friend requests right after the widget is built
+      Provider.of<FriendRequestProvider>(context, listen: false).fetchFriendRequests();
+    });
+  }
+
 
   @override
   Widget build(BuildContext context) {

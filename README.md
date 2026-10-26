@@ -1,88 +1,43 @@
-# Hướng Dẫn Cài Đặt và Chạy Dự Án Flutter - PRM392
+# StarMate
 
-## Thông Tin Dự Án
-- **Sinh viên:** Letcal
-- **Trường:** FPT University
-- **Chuyên Ngành:** BrSe
-- **Môn Học:** PRM392
+Flutter app for meeting new friends by zodiac sign: browse people, filter by zodiac sign and gender, and send friend requests.
 
-## Điều Kiện Tiên Quyết
-Trước khi bắt đầu, hãy đảm bảo máy bạn đã cài đặt các công cụ sau:
+**Status:** Course project (PRM392), FPT University, 2024 — archived. The backend is offline, so the app cannot sign in or load data.
 
-### 1. Flutter SDK
-- Tải và cài đặt từ: https://docs.flutter.dev/get-started/install
-- Phiên bản khuyến nghị: Phiên bản ổn định mới nhất
-- Kiểm tra cài đặt: Chạy `flutter doctor` trong terminal
+## My role
 
-### 2. Android Studio hoặc Visual Studio Code
-#### Cài đặt Visual Studio Code:
-1. Tải VSCode tại: https://code.visualstudio.com/
-2. Cài đặt Extensions:
-   - "Flutter" by Dart Code
-   - "Dart" by Dart Code
+Team Lead and mobile developer. In this repository I built:
 
-### 3. Android SDK
-- Cài đặt qua Android Studio hoặc SDK Tools
-- Cấu hình biến môi trường ANDROID_HOME
+- Friend list page and the friend list API calls.
+- Friend requests and notifications in the home header.
+- Person detail dialog on the home screen.
+- Profile page, light/dark theme switch and logout.
+- Password reset flow: OTP entry and new password.
 
-## Các Bước Cài Đặt Dự Án
+The home feed with filters, sign-in, registration and profile editing were mainly built by [@giabao25](https://github.com/giabao25).
 
-### Bước 1: Clone Dự Án
-```bash
-git clone [https://github.com/Let-cal/star_mate_PRM.git]
-cd [TÊN_THƯ_MỤC_DỰ_ÁN]
-```
+## Team
 
-### Bước 2: Cài Đặt Dependencies
-```bash
+Commits in this repository: [@giabao25](https://github.com/giabao25) and [@Let-cal](https://github.com/Let-cal).
+
+## Stack
+
+Flutter (Dart SDK ^3.5.3), Provider, http, shared_preferences, google_fonts, animations, font_awesome_flutter.
+
+## How to run
+
+The repository contains `lib/` and `pubspec.yaml` only. Generate the platform folders first:
+
+```sh
+flutter create .
 flutter pub get
+flutter run
 ```
 
-### Bước 3: Chạy Ứng Dụng
-#### Trên Máy Ảo
-```bash
-flutter devices  # Kiểm tra danh sách thiết bị
-flutter run      # Chạy trên thiết bị mặc định
-```
+API URLs are hard-coded in `lib/services/api_service.dart` and point to the old Azure backend, which no longer exists.
 
-#### Trên Thiết Bị Vật Lý
-1. Bật chế độ Developer Options trên điện thoại
-2. Bật USB Debugging
-3. Kết nối điện thoại với máy tính
-4. Chạy lệnh `flutter run`
+## Known limitations
 
-## Cấu Trúc Thư Mục Dự Án
-```
-.
-├── lib/                # Mã nguồn chính
-│   ├── main.dart       # File khởi động ứng dụng
-│   ├── models/         # Các lớp mô hình dữ liệu
-│   ├── screens/        # Giao diện màn hình
-│   ├── services/       # Các dịch vụ và API
-│   └── widgets/        # Các widget tái sử dụng
-├── pubspec.yaml        # File cấu hình dependencies
-└── README.md           # Tài liệu hướng dẫn
-```
-
-## Lưu Ý
-- Luôn chạy `flutter pub get` sau khi thêm dependencies mới
-- Sử dụng `flutter format lib/` để định dạng mã
-- Kiểm tra lỗi bằng `flutter analyze`
-
-## Khắc Phục Sự Cố
-- **Lỗi Dependencies:** Chạy `flutter pub get`
-- **Lỗi Build:** Xóa thư mục `build/` và chạy lại
-- **Máy Ảo Không Hoạt Động:** Kiểm tra cài đặt Android Studio
-
-## Liên Hệ Hỗ Trợ
-- Email: [letrancatlam123@gmail.com]
-- Giảng Viên Hướng Dẫn: [PhuongLHK]
-
-## Giấy Phép
-[Chọn Giấy Phép Phù Hợp - Ví Dụ: MIT License]
-```
-
-## Ghi Chú Quan Trọng
-- Thay thế `[https://github.com/Let-cal/star_mate_PRM.git]` bằng đường link GitHub/GitLab của dự án
-- Điều chỉnh thông tin cá nhân và chi tiết dự án cho phù hợp
-- Kiểm tra và cập nhật README khi có thay đổi trong dự án
+- The backend is offline, so the app stops at sign-in.
+- No platform folders in the repository.
+- No automated tests.
